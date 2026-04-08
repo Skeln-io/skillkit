@@ -1,13 +1,28 @@
-# Claude Skills — Your AI Development System
+# Claude Skills: A Complete AI Development System
 
-A complete Claude Code working system: skills, hooks, specialist agents, and CI templates. **Use the green "Use this template" button** to create your own copy, then run `/setup` to scaffold everything into your project.
+Claude Skills is an open-source, template repo that gives you a fully configured Claude Code working environment in one command. Skills, hooks, specialist agents, CI templates, and a personal project manager — scaffolded into your project and ready to use.
 
-## Prerequisites
+## Why This Exists
 
-1. [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) installed
-2. Superpowers plugin installed:
-   - Open Claude Code settings: `claude config edit`
-   - Add to `enabledPlugins`: `"superpowers@claude-plugins-official": true`
+Most developers using Claude Code start from scratch every session. No quality gates, no commit conventions, no design review, no structure. They rely on memory and discipline to stay productive.
+
+This repo replaces discipline with automation. It's the system that runs behind a real production codebase — extracted, generalized, and made brand-configurable so anyone can use it.
+
+*"The skills that keep me shipping, packaged so my clients can ship too."* — Simon Gardner, [Growth by Gardner](https://growthbygardner.com)
+
+## What's Inside
+
+**Development Workflow** — `/commit` creates conventional commits with smart staging. `/review` runs your build, lint, and dispatches specialist agents (TypeScript reviewer, UI designer) before allowing a push. A pre-push hook enforces this — no push without review.
+
+**Personal Project Manager (PPM)** — Always-on behavior layer. Catches scope creep, detects context loss, enforces verification before claiming "done", and gives you the single smallest next action when you're stuck. Configurable to your working style.
+
+**Brand-Aware Content** — `/copy` writes direct response copy using Hopkins, Ogilvy, and Caples frameworks, tuned to your brand voice. `/frontend-eval` audits components against your design system. `/press` writes press releases in DE, US, or UK format. All read from a single brand config file.
+
+**Marketing & Analytics** — `/seo` runs a full 16-sub-skill audit with 10 specialist agents. `/google-ads` provides GAQL query patterns with mutation safety (no changes without explicit confirmation).
+
+**Session Management** — `/wrapup` commits, pushes, and optionally posts a Slack summary. Auto-format hooks run Prettier (or Black for Python) on every file edit. Session-start hooks inject date, branch, and git status.
+
+**Multi-Tenant Support** — Agencies can run every skill for multiple client brands. Each brand gets its own config file. No "active brand" state to get confused by — explicit selection every time.
 
 ## Quick Start
 
@@ -17,60 +32,67 @@ A complete Claude Code working system: skills, hooks, specialist agents, and CI 
 gh repo create my-project --template Skeln-io/claude-skills --public --clone && cd my-project && claude
 ```
 
-Then run `/setup` when Claude Code opens.
+Then run `/setup` when Claude Code opens. It asks 2-3 questions and scaffolds everything.
 
 ### GitHub UI
 
-1. Click **"Use this template"** → **"Create a new repository"** (top of this page)
+1. Click **"Use this template"** at the top of this page
 2. Clone your new repo locally
-3. Open your project in Claude Code
-4. Run `/setup`
-5. Follow the prompts — it scaffolds skills, hooks, and config into your project
+3. Run `claude` in the project directory
+4. Type `/setup`
 
-## Skills
+## Prerequisites
+
+1. [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) installed
+2. [Superpowers plugin](https://github.com/claude-plugins-official/superpowers) — required for brainstorming, planning, TDD, and debugging workflows:
+   ```bash
+   claude config edit
+   # Add: "superpowers@claude-plugins-official": true to enabledPlugins
+   ```
+
+## Skills Reference
 
 | Command | What it does | Brand-aware? |
 |---|---|---|
-| `/setup` | First-run scaffolding — sets up skills, hooks, agents, config | — |
-| `/setup brand` | Add a new brand config for multi-tenant use | — |
+| `/setup` | First-run scaffolding — skills, hooks, agents, config | — |
+| `/setup brand` | Add a new brand for multi-tenant use | — |
 | `/commit` | Conventional commits with smart staging | No |
-| `/review` | Build + lint + specialist agent review, blocks push until clean | No |
-| `/wrapup` | End-of-session: commit, push, optional Slack summary | Yes |
-| `/copy` | Direct response copywriting using proven frameworks | Yes |
-| `/frontend-eval` | Frontend design audit and redesign guidance | Yes |
-| `/seo` | Full SEO audit (16 sub-skills) | No |
-| `/press` | Press release writing (DE/US/UK format) | Yes |
-| `/google-ads` | Google Ads query guide and GAQL patterns | No |
+| `/review` | Build + lint + specialist agent review, blocks push | No |
+| `/wrapup` | Session closeout: commit, push, optional Slack | Yes |
+| `/copy` | Direct response copywriting | Yes |
+| `/frontend-eval` | Frontend design audit and redesign | Yes |
+| `/seo` | Full SEO audit (16 sub-skills, 10 agents) | No |
+| `/press` | Press release writing (DE/US/UK) | Yes |
+| `/google-ads` | Google Ads queries and GAQL patterns | No |
 
-**PPM (Personal Project Manager)** is always-on — it's not a slash command. It watches for context loss, scope creep, and keeps you shipping.
+**PPM** runs automatically — not a slash command.
 
-## Adding a Brand
+## How It Works
 
-For agencies or multi-project setups:
+**Brand config** lives in `config/brands/`. One markdown file per brand with voice, ICP, design tokens, dev commands, and integrations. Brand-aware skills read from here automatically.
 
-1. Run `/setup brand` in Claude Code
-2. Answer 2-3 questions about the brand
-3. A new config file appears in `config/brands/`
+**Hooks** enforce quality without thinking about it:
+- `session-start.sh` — injects date, branch, git status
+- `pre-push-check.sh` — blocks push until `/review` passes
+- `format-file.sh` — auto-formats on every file edit
+- `auto-checkpoint.sh` — commits config changes on session end
 
-Brand-aware skills automatically read from the active brand config.
+**Specialist agents** are dispatched by `/review`:
+- `typescript-pro` — type safety, API contracts, build health
+- `ui-designer` — visual hierarchy, accessibility, responsive behavior, brand alignment
 
 ## Customizing
 
-- **Don't need a skill?** Delete its folder from `.claude/skills/`
-- **Want to change a hook?** Edit the `.sh` files in `.claude/hooks/`
-- **Different formatter?** Update `format-file.sh` to call your formatter
-- **No Slack?** Leave the webhook blank in brand config — wrapup skips it
+- Delete any skill folder you don't need
+- Edit hooks to match your formatter or toolchain
+- Modify `config/profile.md` to tune PPM to your working style
+- Add brands with `/setup brand`
 
-## Dependencies
+## Built With
 
-| Dependency | Required? | Why |
-|---|---|---|
-| Claude Code CLI | Yes | The runtime |
-| superpowers plugin | Yes | Brainstorming, planning, TDD, debugging |
-| Node.js | For JS/TS projects | Build/lint/format hooks |
-| Prettier | Optional | Auto-format hook, skips if not installed |
-| Slack webhook | Optional | Wrapup posts, skips if not configured |
-| GitHub Actions | Optional | CI templates |
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — the runtime
+- [Superpowers plugin](https://github.com/claude-plugins-official/superpowers) — brainstorming, planning, TDD, debugging
+- Bash hooks, GitHub Actions, Markdown skills
 
 ## License
 
